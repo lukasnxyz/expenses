@@ -4,7 +4,6 @@ Just a poor computer science student trying to keep track of his money.
 #### Quick Start
 Move expenses.csv to your desired directory.
 ```bash
-$ make
 $ sudo make install
 ```
 I would suggest adding expeses.sh to your `$PATH` so that you don't have to specify the entire path
