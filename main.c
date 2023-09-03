@@ -98,14 +98,48 @@ void add_expense(FILE *fp, struct Expense exp) {
 
 void list_months_expenses(FILE *fp) {
     UNIMPLEMENTED;
+
+    time_t current_time = time(NULL);
+    struct tm tm = *localtime(&current_time);
+
+    unsigned int target_year = tm.tm_year + 1900;
+    unsigned int target_month = tm.tm_mon + 1;
+
+    char line[500];
+    struct Expense expense;
+
+    while((fgets(line, 500, fp)) != NULL) {
+        char *token;
+        char *rest = line;
+        int section = 0;
+
+        while((token = strtok(section == 0 ? rest : NULL, ";")) != NULL) {
+            if(section == 0) {
+                strcpy(expense.name, token);
+            } else if(section == 1) {
+                expense.cost = atof(token);
+            } else if(section == 2) {
+                expense.day = atoi(token);
+            } else if(section == 3) {
+                expense.month = atoi(token);
+            } else if(section == 4) {
+                expense.year = atoi(token);
+            }
+            section++;
+        }
+
+        if(expense.year == target_year && expense.month == target_month) {
+            print_expense(expense);
+        }
+    }
 }
 
 void help(void) {
     puts("-f -> filename");
     puts("-h -> this message");
     puts("-a -> add an expense");
-    puts("-r -> remove an expense");
-    puts("-l -> list all expenses this month");
+    puts("-r -> remove an expense (unimplemented)");
+    puts("-l -> list all expenses this month (unimplemented)");
     puts("-t -> show current total spent this month");
 }
 
@@ -124,6 +158,7 @@ int main(int argc, char **argv) {
             expenses_file_name = argv[i + 1];
         } else if(strcmp(argv[i], "-h") == 0) {
             help();
+            return 0;
         } else if(strcmp(argv[i], "-a") == 0) {
             expenses_file = fopen(expenses_file_name, "a");
 
