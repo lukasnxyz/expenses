@@ -16,7 +16,7 @@ expenses: main.o
 clean:
 	rm -f expenses *.o
 
-install:
+install: all
 	mkdir -p ${DESTDIR}${PREFIX}/bin
 	mkdir -p ${INFODIR}
 	cp -f expenses ${DESTDIR}${PREFIX}/bin

@@ -21,10 +21,11 @@ $ expenses.sh -t
 
 #### Commands
 ```bash
--f -> filename
+-f -> expenses file path
 -h -> this message
 -a -> add an expense
+-t -> show total spent this month
+-td -> <month> <year> total spent
 -r -> remove an expense (unimplemented)
 -l -> list all expenses this month (unimplemented)
--t -> show current total spent this month
 ```

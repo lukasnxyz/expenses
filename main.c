@@ -23,12 +23,35 @@ void print_expense(struct Expense exp) {
             exp.name, exp.cost, exp.day, exp.month, exp.year);
 }
 
-double total_months_expenses(FILE *fp) {
+void help(void) {
+    puts("Expenses");
+    puts("-f --- expenses file path");
+    puts("-h --- this message");
+    puts("-a --- add an expense");
+    puts("-t --- show total spent this month");
+    puts("-td --- <month> <year> total spent");
+    puts("-r --- remove an expense (unimplemented)");
+    puts("-l --- list all expenses this month (unimplemented)");
+}
+
+double total_months_expenses(FILE *fp, unsigned int n_month, unsigned int n_year) {
     time_t current_time = time(NULL);
     struct tm tm = *localtime(&current_time);
 
-    unsigned int target_year = tm.tm_year + 1900;
-    unsigned int target_month = tm.tm_mon + 1;
+    unsigned int target_month;
+    unsigned int target_year;
+
+    if(n_month == 0) {
+        target_month = tm.tm_mon + 1;
+    } else {
+        target_month = n_month;
+    }
+
+    if(n_year == 0) {
+        target_year = tm.tm_year + 1900;
+    } else {
+        target_year = n_year;
+    }
 
     char line[500];
     double total = 0.0;
@@ -93,6 +116,7 @@ void add_expense(FILE *fp, struct Expense exp) {
     fprintf(fp, "%s;%.2lf;%d;%d;%d\n",
             exp.name, exp.cost, exp.day, exp.month, exp.year);
 
+    printf("Expense added!\n");
     print_expense(exp);
 }
 
@@ -134,20 +158,11 @@ void list_months_expenses(FILE *fp) {
     }
 }
 
-void help(void) {
-    puts("-f -> filename");
-    puts("-h -> this message");
-    puts("-a -> add an expense");
-    puts("-r -> remove an expense (unimplemented)");
-    puts("-l -> list all expenses this month (unimplemented)");
-    puts("-t -> show current total spent this month");
-}
-
 int main(int argc, char **argv) {
-    if(argc < 3) {
-        fprintf(stderr, "You must pass in the location of your expenses file and a command!\n");
+    if(argc < 2) {
+        printf("You must pass in an argument!");
         help();
-        return 1;
+        return 0;
     }
 
     char *expenses_file_name;
@@ -181,7 +196,17 @@ int main(int argc, char **argv) {
                 return 1;
             }
 
-            printf("Total spent this month: €%.2lf\n", total_months_expenses(expenses_file));
+            printf("Total spent this month: €%.2lf\n", total_months_expenses(expenses_file, 0, 0));
+        } else if(strcmp(argv[i], "-td") == 0) {
+            expenses_file = fopen(expenses_file_name, "r");
+
+            if(expenses_file == NULL) {
+                fprintf(stderr, "There was an error opening the file!\n");
+                return 1;
+            }
+
+            printf("Total spent this month: €%.2lf\n", total_months_expenses(expenses_file,
+                        atoi(argv[i + 1]), atoi(argv[i + 2])));
         }
     }
 
