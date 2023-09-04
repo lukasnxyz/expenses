@@ -13,9 +13,14 @@ Adding an expense is as easy as:
 ```bash
 $ expenses.sh -a
 ```
-Seeing total spent this month:
+Seeing expenses and total spent this month:
 ```bash
-$ expenses.sh -t
+$ expenses.sh -l
+```
+Seeing expenses and total spent for specific month and year:
+```bash
+# Example: August 2023
+$ expenses.sh -ld 8 2023
 ```
 
 #### Commands
