@@ -18,9 +18,23 @@ struct Expense {
     unsigned int day;
 };
 
+char *months[] = {
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"};
+
 void print_expense(struct Expense exp) {
-    printf("%s: €%.2f on %d.%d.%d\n",
-            exp.name, exp.cost, exp.day, exp.month, exp.year);
+    printf("%s: €%.2f on %d %s %d\n",
+            exp.name, exp.cost, exp.day, months[exp.month - 1], exp.year);
 }
 
 void help(void) {
@@ -28,10 +42,9 @@ void help(void) {
     puts("-f --- expenses file path");
     puts("-h --- this message");
     puts("-a --- add an expense");
-    puts("-t --- show total spent this month");
-    puts("-td --- <month> <year> total spent");
+    puts("-l --- list all expenses this month with total");
+    puts("-ld --- <month> <yead> list all expenses with total");
     puts("-r --- remove an expense (unimplemented)");
-    puts("-l --- list all expenses this month (unimplemented)");
 }
 
 double total_months_expenses(FILE *fp, unsigned int n_month, unsigned int n_year) {
@@ -120,14 +133,27 @@ void add_expense(FILE *fp, struct Expense exp) {
     print_expense(exp);
 }
 
-void list_months_expenses(FILE *fp) {
-    UNIMPLEMENTED;
-
+void list_months_expenses(FILE *fp, unsigned int n_month, unsigned int n_year) {
     time_t current_time = time(NULL);
     struct tm tm = *localtime(&current_time);
 
-    unsigned int target_year = tm.tm_year + 1900;
-    unsigned int target_month = tm.tm_mon + 1;
+    unsigned int target_year;
+    unsigned int target_month;
+
+    if(n_month == 0) {
+        target_month = tm.tm_mon + 1;
+    } else {
+        target_month = n_month;
+    }
+
+    if(n_year == 0) {
+        target_year = tm.tm_year + 1900;
+    } else {
+        target_year = n_year;
+    }
+
+    printf("Expenses for %s %d: €%.2lf\n", months[target_month - 1], target_year, total_months_expenses(fp, target_month, target_year));
+    rewind(fp);
 
     char line[500];
     struct Expense expense;
@@ -153,6 +179,7 @@ void list_months_expenses(FILE *fp) {
         }
 
         if(expense.year == target_year && expense.month == target_month) {
+            printf(" - ");
             print_expense(expense);
         }
     }
@@ -187,8 +214,6 @@ int main(int argc, char **argv) {
         } else if(strcmp(argv[i], "-r") == 0) {
             remove_expense(NULL, NULL, 0.0);
         } else if(strcmp(argv[i], "-l") == 0) {
-            list_months_expenses(expenses_file);
-        } else if(strcmp(argv[i], "-t") == 0) {
             expenses_file = fopen(expenses_file_name, "r");
 
             if(expenses_file == NULL) {
@@ -196,8 +221,8 @@ int main(int argc, char **argv) {
                 return 1;
             }
 
-            printf("Total spent this month: €%.2lf\n", total_months_expenses(expenses_file, 0, 0));
-        } else if(strcmp(argv[i], "-td") == 0) {
+            list_months_expenses(expenses_file, 0, 0);
+        } else if(strcmp(argv[i], "-ld") == 0) {
             expenses_file = fopen(expenses_file_name, "r");
 
             if(expenses_file == NULL) {
@@ -205,8 +230,12 @@ int main(int argc, char **argv) {
                 return 1;
             }
 
-            printf("Total spent this month: €%.2lf\n", total_months_expenses(expenses_file,
-                        atoi(argv[i + 1]), atoi(argv[i + 2])));
+            if(argv[i + 1] == NULL || argv[i + 2] == NULL) {
+                printf("You must pass in a month in a year with the format <int int>!\n");
+                return 0;
+            }
+
+            list_months_expenses(expenses_file, atoi(argv[i + 1]), atoi(argv[i + 2]));
         }
     }
 
