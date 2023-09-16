@@ -1,5 +1,5 @@
 ### Expenses
-Just a poor computer science student trying to keep track of his money.
+Just a poor cs student trying to keep track of his money.
 
 #### Quick Start
 Move expenses.csv to your desired directory.
@@ -33,3 +33,12 @@ Expenses
 -ld --- <month> <yead> list all expenses with total
 -r --- remove an expense (unimplemented)
 ```
+
+#### Todo
+- [ ] Implement config.h ->
+	- currency
+	- .csv location
+	- default option to run with no options given
+- [ ] See average daily/monthly spending
+- [ ] Ncurses interface?
+- [ ] Add support for spaces in name of expense
