@@ -152,7 +152,10 @@ void list_months_expenses(FILE *fp, unsigned int n_month, unsigned int n_year) {
         target_year = n_year;
     }
 
-    printf("Expenses for %s %d: €%.2lf\n", months[target_month - 1], target_year, total_months_expenses(fp, target_month, target_year));
+    printf("Expenses for %s %d: €%.2lf\n",
+            months[target_month - 1],
+            target_year,
+            total_months_expenses(fp, target_month, target_year));
     rewind(fp);
 
     char line[500];

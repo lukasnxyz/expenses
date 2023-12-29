@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wextra -std=c11 -pedantic
+CFLAGS=-Wextra -Wall -std=c11 -pedantic
 OBJS=main.o
 
 PREFIX=/usr/local

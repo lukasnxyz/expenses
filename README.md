@@ -35,8 +35,8 @@ Expenses
 ```
 
 #### Todo
-- [ ] Implement config.h ->
-	- currency
+- [ ] Implement config.h
+	- currency ($, €)
 	- .csv location
 	- default option to run with no options given
 - [ ] See average daily/monthly spending
