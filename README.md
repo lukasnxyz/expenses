@@ -42,3 +42,5 @@ Expenses
 - [ ] See average daily/monthly spending
 - [ ] Ncurses interface?
 - [ ] Add support for spaces in name of expense
+
+- make sure `$GOPATH` and `$GOBIN` are set

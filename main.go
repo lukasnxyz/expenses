@@ -2,11 +2,23 @@ package main
 
 import (
     "fmt"
-    //"errors"
     "os"
     "strconv"
     //"encoding/csv"
+
+    "github.com/fxtlabs/date"
 )
+
+// Notes
+// - Look in cache file for default csv file (json)?
+// - Currency (json)?
+// - Average daily spending in last two months
+// - Spaces include in name user input
+// - List expenses
+// - Package for expense type
+// - Package for expenses/calculations/etc.
+// - Unit tests
+// - Webapp front end
 
 type Expense struct {
     name string
@@ -51,18 +63,14 @@ func argsHandle(argv []string) (error) {
             help()
             return nil
         } else if arg == "-a" {
-            newExpense := Expense {
-                "test",
-                33.23,
-                2023,
-                12,
-                29,
-            }
+            newExpense := UserInit()
 
             err := newExpense.Add(fName)
             if err != nil {
                 return err
             }
+            fmt.Println("Expense added!")
+            newExpense.Print()
         } else if arg == "-l" {
             err := listExpenses(fName, 0, 0)
             if err != nil {
@@ -90,7 +98,7 @@ func listExpenses(fName string, month, year uint) (error) {
     return nil
 }
 
-func (exp *Expense) Add(fName string) (error) {
+func (exp Expense) Add(fName string) (error) {
     // prompt user for input
 
     f, err := os.OpenFile(fName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -111,7 +119,28 @@ func (exp *Expense) Add(fName string) (error) {
     return err
 }
 
-func (exp *Expense) Print() {
+func UserInit() (exp Expense){
+    today := date.Today()
+    var expName string
+    var expCost float64
+
+    fmt.Print("Expense name: ")
+    fmt.Scan(&expName)
+
+    fmt.Print("Expense cost: ")
+    // check that it's a posotive number (float or int / +)
+    fmt.Scan(&expCost)
+
+    exp.name = expName
+    exp.cost = expCost
+    exp.year = int(today.Year())
+    exp.month = int(today.Month())
+    exp.day = int(today.Day())
+
+    return
+}
+
+func (exp Expense) Print() {
     fmt.Printf("%s: €%.2f on %d %s %d\n", exp.name, exp.cost, exp.day, months[exp.month - 1], exp.year);
 }
 
