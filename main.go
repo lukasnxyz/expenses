@@ -10,6 +10,7 @@ import (
 // Notes
 // - json .cach/ file for default csv location and currency
 // - Average daily spending in last two months
+// - List on specific month and year
 // - Remove an expense
 // - Spaces include in name user input
 // - Unit tests
