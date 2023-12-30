@@ -4,7 +4,7 @@ import (
     "fmt"
     "os"
     "strconv"
-    //"encoding/csv"
+    "encoding/csv"
 
     "github.com/fxtlabs/date"
 )
@@ -14,7 +14,6 @@ import (
 // - Currency (json)?
 // - Average daily spending in last two months
 // - Spaces include in name user input
-// - List expenses
 // - Package for expense type
 // - Package for expenses/calculations/etc.
 // - Unit tests
@@ -83,19 +82,69 @@ func argsHandle(argv []string) (error) {
 }
 
 func listExpenses(fName string, month, year uint) (error) {
-    // read
-//    csvReader := csv.NewReader(file)
- //   data, err := csvReader.ReadAll()
-    //if err != nil {
-        //return err
-    //}
+    f, err := os.Open(fName)
+    if err != nil {
+        return err
+    }
 
-    //expCost := strconv.FormatFloat(exp.cost, 'f', 2, 64)
-    //expenseText := "- " + exp.name + ": $" +  expCost + " on " + strconv.Itoa(exp.day) + " " + strconv.Itoa(exp.month) + " " + strconv.Itoa(exp.year)
+    defer f.Close()
 
-    //fmt.Println(data)
+    _, err = f.Seek(1, 0)
+    if err != nil {
+        return nil
+    }
+
+    // removes first line of file
+    b := make([]byte, 1)
+    for string(b) != "\n" {
+        f.Read(b)
+    }
+
+    csvReader := csv.NewReader(f)
+    csvReader.Comma = ';'
+    data, err := csvReader.ReadAll()
+    if err != nil {
+        return err
+    }
+
+    today := date.Today()
+
+    var expenses []Expense
+    for _, row := range data {
+        expMonth, _ := strconv.Atoi(row[3])
+        expYear, _ := strconv.Atoi(row[4])
+        if expMonth == int(today.Month()) && expYear == int(today.Year()) {
+            var exp Expense
+            exp.Parse(row)
+            expenses = append(expenses, exp)
+        }
+    }
+
+    fmt.Printf("Expenses for %s %d: €%.2f\n", months[today.Month() - 1], today.Year(),
+        TotalExpenses(expenses))
+
+    for _, exp := range expenses {
+        fmt.Print(" - ")
+        exp.Print()
+    }
 
     return nil
+}
+
+func TotalExpenses(expenses []Expense) (total float64) {
+    for _, exp := range expenses {
+        total += exp.cost
+    }
+
+    return
+}
+
+func (exp *Expense) Parse(data []string) {
+    exp.name = data[0]
+    exp.cost, _ = strconv.ParseFloat(data[1], 64) // interfaces here for any type?
+    exp.year, _ = strconv.Atoi(data[2]) // check for errors next 3 lines
+    exp.month, _= strconv.Atoi(data[3])
+    exp.day, _ = strconv.Atoi(data[4])
 }
 
 func (exp Expense) Add(fName string) (error) {
@@ -108,6 +157,7 @@ func (exp Expense) Add(fName string) (error) {
 
     defer f.Close()
 
+    // user Expense.Parse here
     expCost := strconv.FormatFloat(exp.cost, 'f', 2, 64)
     expenseText := exp.name + ";" +  expCost + ";" + strconv.Itoa(exp.day) + ";" + strconv.Itoa(exp.month) + ";" + strconv.Itoa(exp.year) + "\n"
 
@@ -141,7 +191,7 @@ func UserInit() (exp Expense){
 }
 
 func (exp Expense) Print() {
-    fmt.Printf("%s: €%.2f on %d %s %d\n", exp.name, exp.cost, exp.day, months[exp.month - 1], exp.year);
+    fmt.Printf("%s: €%.2f on %d %s %d\n", exp.name, exp.cost, exp.day, months[exp.month - 1], exp.year)
 }
 
 func help() {
