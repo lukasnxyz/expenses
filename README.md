@@ -1,27 +1,24 @@
-### Expenses
+### expenses
 Just a poor cs student trying to keep track of his money.
 
 #### Quick Start
-Move expenses.csv to your desired directory.
+Move expenses.csv to your desired directory. Make sure your `$GOPATH` and `$GOBIN` are set
 ```bash
-$ sudo make install
+$ go install
 ```
-I would suggest adding expeses.sh to your `$PATH` so that you don't have to specify the entire path
-to your .csv file.
-
 Adding an expense is as easy as:
 ```bash
-$ expenses.sh -a
+$ expenses.sh -f /path/to/file.csv -a
 ```
 Seeing expenses and total spent this month:
 ```bash
-$ expenses.sh -l
+$ expenses.sh -f /path/to/file.csv -l
 ```
-Seeing expenses and total spent for specific month and year:
+<!--Seeing expenses and total spent for specific month and year:
 ```bash
 # Example: August 2023
 $ expenses.sh -ld 8 2023
-```
+```-->
 
 #### Commands
 ```text
@@ -30,17 +27,5 @@ Expenses
 -h --- this message
 -a --- add an expense
 -l --- list all expenses this month with total
--ld --- <month> <yead> list all expenses with total
--r --- remove an expense (unimplemented)
+-ld --- <month> <year> list all expenses with total
 ```
-
-#### Todo
-- [ ] Implement config.h
-	- currency ($, €)
-	- .csv location
-	- default option to run with no options given
-- [ ] See average daily/monthly spending
-- [ ] Ncurses interface?
-- [ ] Add support for spaces in name of expense
-
-- make sure `$GOPATH` and `$GOBIN` are set

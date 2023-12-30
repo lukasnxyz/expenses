@@ -1,4 +1,4 @@
-module expenses
+module github.com/systemb4/expenses
 
 go 1.21.5
 
