@@ -18,12 +18,14 @@ type Expense struct {
 
 // [...] is an array as well [4] and [n]
 // [] is a slice
-var Months = [...]string {
+var (
+    Months = [...]string {
     "Jan", "Feb", "Mar",
     "Apr", "May", "Jun",
     "Jul", "Aug", "Sep",
     "Oct", "Nov", "Dec",
-}
+    }
+)
 
 func (exp Expense) Add(fName string) (error) {
     f, err := os.OpenFile(fName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -35,7 +37,8 @@ func (exp Expense) Add(fName string) (error) {
 
     // user Expense.Parse here
     expCost := strconv.FormatFloat(exp.cost, 'f', 2, 64)
-    expenseText := exp.name + ";" +  expCost + ";" + strconv.Itoa(exp.day) + ";" + strconv.Itoa(exp.month) + ";" + strconv.Itoa(exp.year) + "\n"
+    expenseText := exp.name + ";" +  expCost + ";" + strconv.Itoa(exp.day) + ";" +
+        strconv.Itoa(exp.month) + ";" + strconv.Itoa(exp.year) + "\n"
 
     _, err = f.WriteString(expenseText)
     if err != nil {
@@ -82,5 +85,6 @@ func (exp *Expense) UserInit() {
 }
 
 func (exp Expense) Print() {
-    fmt.Printf("%s: €%.2f on %d %s %d\n", exp.name, exp.cost, exp.day, Months[exp.month - 1], exp.year)
+    fmt.Printf("%s: €%.2f on %d %s %d\n", exp.name, exp.cost, exp.day,
+        Months[exp.month - 1], exp.year)
 }
