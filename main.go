@@ -15,8 +15,13 @@ import (
 // - Spaces include in name user input
 // - Unit tests
 // - Webapp front end
+// - Integrade to show status of investments as well?
 
 func main() {
+    // Run http server by default or with '-c' run command line version
+    // HttpServerRun()
+
+    // There's a better way to handle cli args in go
     argv := os.Args[1:]
 
     if len(argv) <= 0 {
